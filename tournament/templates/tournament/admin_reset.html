@@ -1,0 +1,29 @@
+{% extends 'tournament/base.html' %}
+
+{% block content %}
+<div class="max-w-xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-red-200">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-xl font-black text-red-900">Reset Tournament Data</h1>
+            <p class="text-xs text-slate-500 mt-1">This action prepares the website for the next tournament.</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="text-xs text-slate-600 hover:text-slate-900 underline">&larr; Cancel</a>
+    </div>
+
+    <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-900 space-y-2">
+        <p class="font-bold">The following records will be permanently deleted:</p>
+        <ul class="list-disc list-inside text-xs space-y-1">
+            <li>All registered teams</li>
+            <li>All scheduled matches and results</li>
+            <li>All points-table standings</li>
+        </ul>
+        <p class="text-xs font-semibold pt-1">Tournament settings, admin accounts, and website configuration will be kept.</p>
+    </div>
+
+    <form method="post" class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
+        {% csrf_token %}
+        <a href="{% url 'admin_dashboard' %}" class="text-center border border-slate-300 text-slate-700 font-bold text-sm px-4 py-2.5 rounded-xl hover:bg-slate-50">Cancel</a>
+        <button type="submit" class="bg-red-700 hover:bg-red-800 text-white font-bold text-sm px-4 py-2.5 rounded-xl shadow transition-all">Delete All Tournament Data</button>
+    </form>
+</div>
+{% endblock %}

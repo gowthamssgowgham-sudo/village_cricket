@@ -1,0 +1,75 @@
+{% extends 'tournament/base.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- Header Banner -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900">Organizer Dashboard</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Manage tournament teams, schedules, scores, prizes, and contact details.</p>
+        </div>
+        <a href="{% url 'admin_settings' %}" class="bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow transition-all text-center flex items-center justify-center gap-2">
+            ⚙️ Tournament Settings
+        </a>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+            <div class="text-xs font-bold text-amber-800 uppercase tracking-wider">Pending Approvals</div>
+            <div class="text-2xl sm:text-3xl font-black text-amber-900 mt-1">{{ pending_teams_count|default:"0" }}</div>
+            <a href="{% url 'admin_teams' %}" class="text-xs font-bold text-amber-700 hover:underline mt-2 inline-block">Review Teams &rarr;</a>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <div class="text-xs font-bold text-slate-600 uppercase tracking-wider">Total Matches</div>
+            <div class="text-2xl sm:text-3xl font-black text-slate-900 mt-1">{{ total_matches|default:"0" }}</div>
+            <a href="{% url 'admin_schedule' %}" class="text-xs font-bold text-slate-700 hover:underline mt-2 inline-block">Manage Schedule &rarr;</a>
+        </div>
+
+        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200">
+            <div class="text-xs font-bold text-emerald-800 uppercase tracking-wider">Completed Matches</div>
+            <div class="text-2xl sm:text-3xl font-black text-emerald-900 mt-1">{{ completed_matches|default:"0" }}</div>
+            <a href="{% url 'results' %}" class="text-xs font-bold text-emerald-700 hover:underline mt-2 inline-block">View Results &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Organizer Control Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="{% url 'admin_teams' %}" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 shadow-sm transition-all group block">
+            <div class="text-3xl mb-3" aria-hidden="true">📋</div>
+            <h2 class="font-black text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Team Approvals</h2>
+            <p class="text-xs text-slate-500 mt-1">Approve or reject newly registered village teams.</p>
+            <span class="text-xs font-bold text-emerald-800 mt-3 inline-block">Manage Teams &rarr;</span>
+        </a>
+
+        <a href="{% url 'admin_schedule' %}" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 shadow-sm transition-all group block">
+            <div class="text-3xl mb-3" aria-hidden="true">🗓️</div>
+            <h2 class="font-black text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Match Scheduler & Scores</h2>
+            <p class="text-xs text-slate-500 mt-1">Create new fixtures and enter live/completed match scores.</p>
+            <span class="text-xs font-bold text-emerald-800 mt-3 inline-block">Manage Schedule &rarr;</span>
+        </a>
+
+        <a href="{% url 'admin_settings' %}" class="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 shadow-sm transition-all group block">
+            <div class="text-3xl mb-3" aria-hidden="true">⚙️</div>
+            <h2 class="font-black text-slate-900 text-base group-hover:text-emerald-800 transition-colors">Tournament Settings</h2>
+            <p class="text-xs text-slate-500 mt-1">Update start/end dates, 1st/2nd/3rd prizes, contact numbers, and venue address.</p>
+            <span class="text-xs font-bold text-emerald-800 mt-3 inline-block">Edit Settings &rarr;</span>
+        </a>
+    </div>
+
+    {% if user.is_staff %}
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="font-black text-red-900 text-base">Start a New Tournament</h2>
+                <p class="text-xs text-red-800 mt-1">Delete all teams, fixtures, results, and points-table records. Tournament settings will be kept.</p>
+            </div>
+            <a href="{% url 'reset_tournament' %}" class="bg-red-700 hover:bg-red-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow transition-all text-center whitespace-nowrap">
+                Reset Tournament Data
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

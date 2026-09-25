@@ -1,0 +1,81 @@
+{% extends 'tournament/base.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- Header Bar -->
+    <div class="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-800">Tournament Points Table</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Current standings and match statistics.</p>
+        </div>
+        <a href="{% url 'home' %}" class="text-xs font-bold text-slate-600 hover:text-slate-900 underline">&larr; Home</a>
+    </div>
+
+    <!-- Points Table -->
+    <div class="overflow-x-auto bg-white rounded-2xl shadow-sm border border-slate-200">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm whitespace-nowrap">
+            <thead>
+                <tr class="bg-slate-900 text-white font-bold border-b border-slate-800">
+                    <th class="p-3.5 text-center w-12">#</th>
+                    <th class="p-3.5">Team Name</th>
+                    <th class="p-3.5 text-center">Played</th>
+                    <th class="p-3.5 text-center">Won</th>
+                    <th class="p-3.5 text-center">Lost</th>
+                    <th class="p-3.5 text-center">Tied</th>
+                    {% if standings.0.net_run_rate is not None %}
+                        <th class="p-3.5 text-center">NRR</th>
+                    {% endif %}
+                    <th class="p-3.5 text-center font-black text-amber-400">Points</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+                {% for item in standings %}
+                    <tr class="hover:bg-slate-50/80 transition-colors {% if forloop.counter <= 2 %}bg-emerald-50/20{% endif %}">
+                        
+                        <!-- Rank Badge -->
+                        <td class="p-3.5 text-center font-bold">
+                            {% if forloop.counter == 1 %}
+                                <span class="inline-flex items-center justify-center w-6 h-6 bg-amber-100 text-amber-800 rounded-full text-xs font-black">1</span>
+                            {% elif forloop.counter == 2 %}
+                                <span class="inline-flex items-center justify-center w-6 h-6 bg-slate-200 text-slate-800 rounded-full text-xs font-black">2</span>
+                            {% elif forloop.counter == 3 %}
+                                <span class="inline-flex items-center justify-center w-6 h-6 bg-amber-700/20 text-amber-900 rounded-full text-xs font-black">3</span>
+                            {% else %}
+                                <span class="text-slate-400">{{ forloop.counter }}</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Team Name -->
+                        <td class="p-3.5 font-bold text-slate-900">
+                            {{ item.team.name }}
+                        </td>
+
+                        <!-- Stats -->
+                        <td class="p-3.5 text-center font-semibold">{{ item.played }}</td>
+                        <td class="p-3.5 text-center font-bold text-emerald-700">{{ item.won }}</td>
+                        <td class="p-3.5 text-center text-red-600">{{ item.lost }}</td>
+                        <td class="p-3.5 text-center text-slate-500">{{ item.tied }}</td>
+
+                        {% if standings.0.net_run_rate is not None %}
+                            <td class="p-3.5 text-center text-xs font-mono">{{ item.net_run_rate|default:"0.000" }}</td>
+                        {% endif %}
+
+                        <!-- Points -->
+                        <td class="p-3.5 text-center font-black text-amber-600 text-base">
+                            {{ item.points }}
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="p-8 text-center text-slate-500 text-sm">
+                            No standings data available yet.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

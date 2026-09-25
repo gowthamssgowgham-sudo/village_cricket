@@ -1,0 +1,70 @@
+{% extends 'tournament/base.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- Header Bar -->
+    <div class="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-800">Participating Teams</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Approved village teams and squad rosters.</p>
+        </div>
+        <a href="{% url 'home' %}" class="text-xs font-bold text-slate-600 hover:text-slate-900 underline">&larr; Home</a>
+    </div>
+
+    <!-- Teams Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for team in teams %}
+            <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <!-- Team Title & Captain -->
+                    <div class="flex justify-between items-start border-b border-slate-100 pb-3 mb-3">
+                        <div>
+                            <h2 class="text-lg sm:text-xl font-black text-emerald-900">
+                                {{ team.name }}
+                            </h2>
+                            <p class="text-xs sm:text-sm text-slate-600 mt-1 flex items-center gap-1.5 font-medium">
+                                <span>👤 Captain:</span>
+                                <span class="font-bold text-slate-900">{{ team.captain_name }}</span>
+                            </p>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-200">
+                            Approved
+                        </span>
+                    </div>
+
+                    <!-- Squad Roster -->
+                    <div class="mt-4">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                            Squad Roster
+                        </p>
+
+                        <div class="flex flex-wrap gap-1.5">
+                            {% if team.get_players_list %}
+                                {% for player in team.get_players_list %}
+                                    <span class="bg-slate-100 border border-slate-200 text-slate-700 text-xs font-medium px-2.5 py-1 rounded-lg">
+                                        {{ player }}
+                                    </span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-xs text-slate-400 italic">No players listed.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if team.phone_number and user.is_authenticated and user.is_staff %}
+                    <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500">
+                        📱 Contact: <span class="font-bold text-slate-700">{{ team.phone_number }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        {% empty %}
+            <div class="col-span-full bg-white p-8 rounded-2xl border border-dashed border-slate-300 text-center text-slate-500 text-sm">
+                No teams approved yet.
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

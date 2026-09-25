@@ -1,0 +1,120 @@
+{% extends 'tournament/base.html' %}
+
+{% block content %}
+<div class="mb-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-slate-800">Match Scheduler & Results Control</h1>
+    <a href="{% url 'admin_dashboard' %}" class="text-xs text-slate-600 hover:text-slate-900 underline">&larr; Back to Dashboard</a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Schedule Form -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-fit">
+        <h2 class="text-lg font-bold mb-4 text-slate-800">Schedule New Match</h2>
+
+        {% if form.non_field_errors %}
+            <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="space-y-4 text-sm">
+            {% csrf_token %}
+
+            <div>
+                <label class="block font-semibold mb-1 text-slate-700">Team A</label>
+                {{ form.team_a }}
+                {% if form.team_a.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.team_a.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block font-semibold mb-1 text-slate-700">Team B</label>
+                {{ form.team_b }}
+                {% if form.team_b.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.team_b.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block font-semibold mb-1 text-slate-700">Date & Time</label>
+                {{ form.date_time }}
+                {% if form.date_time.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.date_time.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block font-semibold mb-1 text-slate-700">Venue</label>
+                {{ form.venue }}
+                {% if form.venue.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.venue.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="block font-semibold mb-1 text-slate-700">Initial Status</label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ form.status.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 rounded-lg transition-colors mt-2">
+                Create Fixture
+            </button>
+        </form>
+    </div>
+
+    <!-- Match List -->
+    <div class="lg:col-span-2 space-y-4">
+        <h2 class="text-lg font-bold text-slate-800">Scheduled Matches</h2>
+
+        {% for match in matches %}
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div class="space-y-1">
+                    <div class="font-bold text-slate-900 text-base">
+                        {{ match.team_a.name }} <span class="text-slate-400 font-normal">vs</span> {{ match.team_b.name }}
+                    </div>
+                    <div class="text-xs text-slate-500 flex flex-wrap gap-2 items-center">
+                        <span>🗓️ {{ match.date_time|date:"d M Y, h:i A" }}</span>
+                        <span>•</span>
+                        <span>📍 {{ match.venue }}</span>
+                    </div>
+
+                    <!-- Status Pill -->
+                    <div class="mt-2">
+                        {% if match.status == 'LIVE' %}
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 border border-red-200">
+                                <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span> LIVE
+                            </span>
+                        {% elif match.status == 'UPCOMING' %}
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                UPCOMING
+                            </span>
+                        {% elif match.status == 'COMPLETED' %}
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                COMPLETED
+                            </span>
+                        {% else %}
+                            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                                {{ match.get_status_display }}
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <a href="{% url 'admin_update_match' match.id %}" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-lg w-full sm:w-auto text-center transition-colors">
+                    Enter Result / Update Status
+                </a>
+            </div>
+        {% empty %}
+            <div class="bg-white p-8 rounded-xl border border-slate-200 text-center text-slate-500">
+                No matches created yet. Use the form on the left to schedule a match.
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

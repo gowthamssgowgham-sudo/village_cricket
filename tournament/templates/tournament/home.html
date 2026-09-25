@@ -1,0 +1,146 @@
+{% extends 'tournament/base.html' %}
+
+{% block content %}
+<!-- Main Tournament Banner -->
+<div class="bg-gradient-to-r from-emerald-900 via-emerald-800 to-slate-900 text-white p-6 sm:p-10 rounded-2xl shadow-md text-center mb-6 sm:mb-8 border border-emerald-700/50">
+    <h1 class="text-2xl sm:text-4xl lg:text-5xl font-black uppercase tracking-wider text-amber-400">
+        {{ info.title|default:"Village Premier League" }}
+    </h1>
+    
+    <p class="text-emerald-200 text-sm sm:text-base mt-2 sm:mt-3 font-medium">
+        📍 {{ info.location|default:"Village Central Ground" }}
+        {% if info.start_date and info.end_date %}
+            | 🗓️ {{ info.start_date|date:"d M Y" }} to {{ info.end_date|date:"d M Y" }}
+        {% endif %}
+    </p>
+
+    <!-- Dynamic Prize Pool (1st, 2nd, and 3rd) -->
+    <div class="mt-5 flex flex-wrap justify-center gap-2.5 sm:gap-3 text-xs sm:text-sm font-bold">
+        <div class="bg-amber-500/20 text-amber-300 border border-amber-400/40 px-3.5 py-1.5 rounded-xl flex items-center gap-1.5">
+            🥇 <span>1st Prize:</span> {{ info.first_prize|default:"₹25,000" }}
+        </div>
+        <div class="bg-slate-300/20 text-slate-200 border border-slate-300/40 px-3.5 py-1.5 rounded-xl flex items-center gap-1.5">
+            🥈 <span>2nd Prize:</span> {{ info.second_prize|default:"₹15,000" }}
+        </div>
+        <div class="bg-amber-700/30 text-amber-200 border border-amber-600/40 px-3.5 py-1.5 rounded-xl flex items-center gap-1.5">
+            🥉 <span>3rd Prize:</span> {{ info.third_prize|default:"₹5,000" }}
+        </div>
+    </div>
+
+    <!-- Quick Action Navigation Bar on Banner -->
+    <div class="mt-6 pt-5 border-t border-emerald-700/60 flex flex-wrap justify-center gap-3">
+        <a href="{% url 'fixtures' %}" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 py-2.5 rounded-xl font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+            🗓️ View Fixtures
+        </a>
+        <a href="{% url 'standings' %}" class="bg-slate-950 hover:bg-slate-800 text-white px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+            📊 View Points Table
+        </a>
+        <a href="{% url 'results' %}" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+            🏆 Match Results
+        </a>
+    </div>
+</div>
+
+<!-- Announcement Bar (If set by Admin) -->
+{% if info.announcement %}
+<div class="bg-amber-50 border-l-4 border-amber-500 text-amber-900 p-4 rounded-xl shadow-sm mb-6 text-xs sm:text-sm flex items-start gap-3">
+    <span class="text-base sm:text-lg">📢</span>
+    <div>
+        <span class="font-bold">Latest Announcement:</span> {{ info.announcement }}
+    </div>
+</div>
+{% endif %}
+
+<!-- Grid Layout: Live Action & Dashboard Shortcut -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+    <!-- Live Matches Card -->
+    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
+                <span class="inline-block w-3 h-3 bg-red-600 rounded-full animate-ping"></span> Live & Upcoming Action
+            </h2>
+            <a href="{% url 'fixtures' %}" class="text-xs font-bold text-emerald-800 hover:underline">Full Schedule &rarr;</a>
+        </div>
+
+        {% for match in live_matches %}
+            <div class="border border-slate-200 p-4 rounded-xl bg-slate-50 mb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <div class="font-black text-sm sm:text-base text-slate-800">
+                        {{ match.team_a.name }} <span class="text-xs text-slate-500 font-normal">vs</span> {{ match.team_b.name }}
+                    </div>
+                    <div class="text-xs text-slate-500 mt-0.5">🗓️ {{ match.date_time|date:"d M Y, h:i A" }}</div>
+                </div>
+                <div class="text-xs font-bold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full border border-emerald-300">
+                    📍 {{ match.venue }}
+                </div>
+            </div>
+        {% empty %}
+            <div class="p-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                <p class="text-xs sm:text-sm text-slate-500">No match is currently live.</p>
+                <a href="{% url 'fixtures' %}" class="inline-block mt-3 bg-emerald-800 text-white text-xs px-4 py-2 rounded-lg font-bold hover:bg-emerald-700 transition-colors">
+                    Check Upcoming Fixtures
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Quick Navigation Hub -->
+    <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+        <div>
+            <h2 class="text-lg sm:text-xl font-black text-slate-900 mb-2">Tournament Hub</h2>
+            <p class="text-xs sm:text-sm text-slate-600 mb-6">Explore tournament schedules, team rankings, and live score updates.</p>
+        </div>
+
+        <!-- Touch-Friendly Buttons -->
+        <div class="space-y-3">
+            <a href="{% url 'fixtures' %}" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 text-center py-3 rounded-xl font-black text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2">
+                🗓️ View Match Fixtures
+            </a>
+            <a href="{% url 'standings' %}" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-center py-3 rounded-xl font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2">
+                📊 View Points Table
+            </a>
+            <a href="{% url 'teams' %}" class="w-full bg-emerald-800 hover:bg-emerald-900 text-white text-center py-3 rounded-xl font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2">
+                👥 View Approved Teams
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- Contact & Venue Information Section -->
+<div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
+    <h2 class="text-lg sm:text-xl font-black text-slate-900 mb-4 flex items-center gap-2">
+        📞 Tournament Contact & Venue
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Contact Numbers -->
+        <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+            <h3 class="font-bold text-emerald-900 text-sm mb-3">Organizing Committee Contact</h3>
+            <div class="space-y-2 text-xs sm:text-sm">
+                <div class="flex items-center gap-2 text-slate-800">
+                    <span>📱 Primary Contact:</span>
+                    <a href="tel:{{ info.contact_phone_1 }}" class="font-bold text-emerald-800 hover:underline">
+                        {{ info.contact_phone_1|default:"+91 98765 43210" }}
+                    </a>
+                </div>
+                <div class="flex items-center gap-2 text-slate-800">
+                    <span>📱 Secondary Contact:</span>
+                    <a href="tel:{{ info.contact_phone_2 }}" class="font-bold text-emerald-800 hover:underline">
+                        {{ info.contact_phone_2|default:"+91 91234 56789" }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Venue Address -->
+        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <h3 class="font-bold text-slate-900 text-sm mb-3">Tournament Venue Address</h3>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                📍 {{ info.full_address|default:"Village Sports Ground, Near Gram Panchayat Office, Central District" }}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Village Cricket Championship{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Hide scrollbars for clean navigation on mobile touch devices */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
+
+    <!-- Sticky Responsive Header -->
+    <header class="bg-emerald-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            
+            <div class="flex justify-between items-center">
+                <!-- Branding -->
+                <a href="{% url 'home' %}" class="text-lg sm:text-xl lg:text-2xl font-black tracking-tight flex items-center gap-2">
+                    <span aria-hidden="true">🏏</span> 
+                    <span class="bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent">Village Premier League</span>
+                </a>
+                
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold" aria-label="Desktop Navigation">
+                    <a href="{% url 'home' %}" class="hover:text-amber-400 transition-colors">Home</a>
+                    <a href="{% url 'fixtures' %}" class="hover:text-amber-400 transition-colors">Fixtures</a>
+                    <a href="{% url 'results' %}" class="hover:text-amber-400 transition-colors">Results</a>
+                    <a href="{% url 'standings' %}" class="hover:text-amber-400 transition-colors">Points Table</a>
+                    <a href="{% url 'teams' %}" class="hover:text-amber-400 transition-colors">Teams</a>
+                    <a href="{% url 'register_team' %}" class="bg-amber-500 text-slate-950 px-4 py-2 rounded-lg font-bold hover:bg-amber-400 shadow transition-all">Register Team</a>
+                </nav>
+
+                <!-- Admin Auth Controls -->
+                <div class="flex items-center gap-2">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'admin_dashboard' %}" class="bg-slate-950 hover:bg-slate-800 text-xs sm:text-sm text-white px-3.5 py-1.5 rounded-lg font-bold shadow transition-colors">Portal</a>
+                        
+                        <!-- POST Logout Form -->
+                        <form method="post" action="{% url 'logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="text-xs sm:text-sm underline text-slate-300 hover:text-white ml-2 cursor-pointer bg-transparent border-0 p-0">
+                                Logout
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-xs sm:text-sm text-slate-200 hover:text-amber-400 underline font-medium">Admin</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Mobile & Tablet Scrollable Navigation Bar -->
+            <nav class="lg:hidden flex gap-2 overflow-x-auto whitespace-nowrap mt-3 pt-2.5 border-t border-emerald-800/80 text-xs sm:text-sm font-semibold pb-1 no-scrollbar" aria-label="Mobile Navigation">
+                <a href="{% url 'home' %}" class="bg-emerald-800/80 text-white px-3.5 py-1.5 rounded-full hover:bg-emerald-700">Home</a>
+                <a href="{% url 'fixtures' %}" class="bg-emerald-800/80 text-white px-3.5 py-1.5 rounded-full hover:bg-emerald-700">Fixtures</a>
+                <a href="{% url 'results' %}" class="bg-emerald-800/80 text-white px-3.5 py-1.5 rounded-full hover:bg-emerald-700">Results</a>
+                <a href="{% url 'standings' %}" class="bg-emerald-800/80 text-white px-3.5 py-1.5 rounded-full hover:bg-emerald-700">Points Table</a>
+                <a href="{% url 'teams' %}" class="bg-emerald-800/80 text-white px-3.5 py-1.5 rounded-full hover:bg-emerald-700">Teams</a>
+                <a href="{% url 'register_team' %}" class="bg-amber-500 text-slate-950 px-3.5 py-1.5 rounded-full font-bold">Register Team</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <!-- Global Notification Container -->
+    {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full space-y-2">
+            {% for message in messages %}
+                <div class="p-3.5 text-xs sm:text-sm rounded-xl border shadow-sm flex justify-between items-center
+                    {% if message.tags == 'error' or message.tags == 'danger' %}
+                        bg-red-50 text-red-900 border-red-200
+                    {% elif message.tags == 'warning' %}
+                        bg-amber-50 text-amber-900 border-amber-200
+                    {% elif message.tags == 'info' %}
+                        bg-blue-50 text-blue-900 border-blue-200
+                    {% else %}
+                        bg-emerald-50 text-emerald-900 border-emerald-200
+                    {% endif %}">
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 flex-grow w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 text-slate-400 text-center text-xs sm:text-sm py-6 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>&copy; {% now "Y" %} Village Sports Committee. Built for local cricket lovers.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
