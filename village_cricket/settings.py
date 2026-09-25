@@ -25,7 +25,10 @@ SECRET_KEY = 'django-insecure--7+go5%ldqm^v(qi6$xavv)v&pp7y_ns1ptiaev+98)4yuwd#+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+from decouple import Csv, config
+
+# Make sure Csv() converts comma-separated strings into a Python list
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='127.0.0.1,localhost,.onrender.com')
 
 
 # Application definition
